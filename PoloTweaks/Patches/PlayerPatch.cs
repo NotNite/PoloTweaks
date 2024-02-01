@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using HarmonyLib;
 using PoloTweaks.Modules;
 using Reptile;
@@ -6,16 +5,23 @@ using UnityEngine;
 
 namespace PoloTweaks.Patches;
 
-[HarmonyPatch(typeof(CharacterVisual))]
-public class CharacterVisualPatch {
+[HarmonyPatch(typeof(Player))]
+public class PlayerPatch {
     [HarmonyPostfix]
-    [HarmonyPatch("InitVFX")]
-    public static void InitVFX(CharacterVisual __instance, PlayerVisualEffects prefabs) {
+    [HarmonyPatch("SetCharacter")]
+    public static void SetCharacter(Player __instance, Characters setChar, int setOutfit = 0) {
         var trailModule = Plugin.GetModule<TrailModule>();
         if (trailModule.Config.Enabled.Value) {
-            var orig = __instance.VFX.boostpackTrail.GetComponent<TrailRenderer>();
-            var leftTrail = __instance.footL.gameObject.AddComponent<TrailRenderer>();
-            var rightTrail = __instance.footR.gameObject.AddComponent<TrailRenderer>();
+            if (!trailModule.Config.AllPlayers.Value && __instance.isAI) {
+                return;
+            }
+
+            trailModule.Log.LogDebug("Setting up trail for player.");
+
+            var characterVisual = __instance.characterVisual;
+            var orig = characterVisual.VFX.boostpackTrail.GetComponent<TrailRenderer>();
+            var leftTrail = characterVisual.footL.gameObject.AddComponent<TrailRenderer>();
+            var rightTrail = characterVisual.footR.gameObject.AddComponent<TrailRenderer>();
 
             Setup(
                 orig,
@@ -33,15 +39,18 @@ public class CharacterVisualPatch {
     }
 
     private static void Setup(TrailRenderer orig, TrailRenderer @new, Color color, float length) {
-        @new.time = orig.time;
         @new.startWidth = orig.startWidth;
         @new.endWidth = orig.endWidth;
         @new.minVertexDistance = orig.minVertexDistance;
-        @new.startColor = color;
-        @new.endColor = color;
         @new.time = length;
-        @new.material = orig.material;
         @new.enabled = true;
         @new.emitting = true;
+
+        var tex = new Texture2D(2, 1);
+        tex.SetPixel(0, 0, color);
+        tex.SetPixel(1, 0, Color.clear);
+        tex.Apply();
+        @new.material = new Material(orig.material);
+        @new.material.mainTexture = tex;
     }
 }

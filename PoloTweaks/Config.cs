@@ -14,5 +14,6 @@ public class Config(ConfigFile config) {
     public class ConfigTrail(ConfigFile config) : ModuleConfig(config, "Trail") {
         public ConfigEntry<float> Length = config.Bind("Trail", "Length", 1f, "The length of the trail.");
         public ConfigEntry<Color> Color = config.Bind("Trail", "Color", UnityEngine.Color.white, "The color of the trail.");
+        public ConfigEntry<bool> AllPlayers = config.Bind("Trail", "AllPlayers", false, "Enable trails for all players on Slop Crew.");
     }
 }
