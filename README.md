@@ -40,4 +40,6 @@ length = 0.5
 bone = "footr"
 color = "#FF0000D9"
 length = 0.5
+# Make the trails only appear at a certain speed (in Unity units)
+# min_speed = 5
 ```
