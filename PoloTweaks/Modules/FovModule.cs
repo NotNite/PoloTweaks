@@ -1,9 +1,9 @@
 namespace PoloTweaks.Modules;
 
-public class FovModule : Module {
-    public Config.ConfigFov Config;
+public class FovModule() : Module("fov") {
+    public FovConfig Config = new();
 
-    public FovModule() : base("Fov") {
-        this.Config = this.GetConfig<Config.ConfigFov>();
+    public class FovConfig : ModuleConfig {
+        public float Fov { get; set; } = 90f;
     }
 }

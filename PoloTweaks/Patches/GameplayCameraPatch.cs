@@ -10,8 +10,8 @@ public class GameplayCameraPatch {
     [HarmonyPatch("Awake")]
     private static void Awake(GameplayCamera __instance) {
         var fovModule = Plugin.GetModule<FovModule>();
-        if (Plugin.GetConfig(fovModule.Id).Enabled.Value) {
-            __instance.cam.fieldOfView = fovModule.Config.Fov.Value;
+        if (fovModule.Config.Enabled) {
+            __instance.cam.fieldOfView = fovModule.Config.Fov;
         }
     }
 }

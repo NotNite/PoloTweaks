@@ -8,6 +8,4 @@ public abstract class Module(string id) {
 
     public void Init() { }
     public void Update() { }
-
-    public T GetConfig<T>() where T : ModuleConfig => Plugin.GetConfig<T>(this.Id);
 }
